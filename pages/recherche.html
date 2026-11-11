@@ -10,19 +10,20 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
       referrerpolicy="no-referrer"
     />
+    <script type="module" src="js/recherche.js"></script>
   </head>
   <body class="min-h-screen bg-[#010309] text-[#e6edf3] font-sans">
     <header
       class="bg-[#161b22] px-3 py-3 flex justify-between items-center border-b-1 border-b-gray-500 sticky top-0"
     >
-      <div class="logo flex items-center gap-3">
+      <a class="logo flex items-center gap-3" href="/index.html">
         <img
           class="h-10 w-10 fill-white rounded-md"
           src="/imges/logo.png"
           alt="logo"
         />
         <h1 class="text-xl font-semibold">DevScope</h1>
-      </div>
+      </a>
       <nav
         aria-label="Navigation principale"
         class="flex items-center gap-2 text-sm"
@@ -35,68 +36,53 @@
           Recherche
         </a>
         <a
-          href="shortlist.html"
+          href="/pages/recherche.html"
           class="rounded-md border border-[#30363d] px-3 py-1.5 font-medium text-[#e6edf3] hover:bg-[#21262d]"
         >
           Shortlist
         </a>
       </nav>
     </header>
-    <main class="min-h-screen grid grid-col-6">
-      <aside class="bg-[#161b22] col-end-1 flex flex-col items-center py-5">
-        <img
-          class="w-40 rounded-full"
-          src="/imges/profil.png"
-          alt="photo-profile"
-        />
-        <h3 class="text-xl font-semibold mt-1">youssef</h3>
-        <p class="font-medium text-[#7d8590]">@youssef-odada</p>
-        <p class="text-[#58a6ff] my-3 text-xl">"full stack web développer"</p>
-        <div
-          class="rounded-md border border-[#30363d] px-3 py-2 font-medium text-[#e6edf3] flex flex-col gap-2 min-w-128"
-        >
-          <h4><i class="fa-solid fa-globe"></i>errachidia, morocco</h4>
-          <h4>
-            <i class="fa-solid fa-calendar-days"></i>Membre depuis janvier 2021
-          </h4>
+    <form id="recherch-form" class="mt-4">
+      <label for="username" class="sr-only">Nom d'utilisateur GitHub</label>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <div class="relative flex-1">
+          <i
+            class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-[#7d8590]"
+          ></i>
+          <input
+            id="user-name"
+            name="username"
+            type="text"
+            autocomplete="off"
+            placeholder="Entrez un nom d'utilisateur…"
+            class="w-full rounded-md border border-[#30363d] bg-[#0d1117] py-2.5 pl-10 pr-3 text-base text-[#e6edf3] placeholder:text-[#7d8590] focus:border-[#58a6ff] focus:outline-none focus:ring-2 focus:ring-[#1f6feb]/50"
+          />
         </div>
-        <div class="flex gap-4 my-5">
-          <div
-            class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
-          >
-            <p class="number-depots text-[#d29922] text-2xl">64</p>
-            <p class="font-medium text-[#7d8590]">DEPOTS</p>
-          </div>
-          <div
-            class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
-          >
-            <p class="number-abonnes text-[#58a6ff] text-2xl">95</p>
-            <p class="font-medium text-[#7d8590]">ABONNES</p>
-          </div>
-          <div
-            class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
-          >
-            <p class="number-abonnements text-[#3fb950] text-2xl">18</p>
-            <p class="font-medium text-[#7d8590]">ABONNEMENTS</p>
-          </div>
-        </div>
-
         <button
-          class="rounded-2xl bg-[#58a6ff] px-6 py-4 text-lg font-bold text-white my-4"
+          type="submit"
+          class="rounded-md border border-[#2ea043] bg-[#238636] px-5 py-2.5 font-semibold text-white hover:bg-[#2ea043] focus:outline-none focus:ring-2 focus:ring-[#3fb950]/50"
         >
-          <i class="fa-solid fa-star"></i> Ajouter a la shortlist</button
-        ><button
-          class="rounded-2xl bg-[#7d8590] px-6 py-4 text-lg font-bold text-white my-4"
-        >
-          Voir le profil original <i class="fa-solid fa-arrow-right"></i>
+          Analyser
         </button>
-      </aside>
-      <section class="col-end-6 col-start-1 flex flex-col px-5 py-4">
+      </div>
+      <p
+        id="errorUsername"
+        class="mt-2 min-h-5 text-left text-sm text-[#f85149]"
+      ></p>
+    </form>
+    <main class="min-h-screen grid grid-cols-6">
+      <aside class="aside-profile col-end-1 flex px-2"></aside>
+      <section class="col-end-6 col-start-1 flex flex-col gap-5 px-5 py-4">
         <div class="flex items-center gap-4">
           <h1 class="text-4xl font-bold text-white">Depots</h1>
-          <span class="bg-[#58a6ff] text-2xl px-2.5 py-1.5 rounded-xl">64</span>
+          <span
+            id="repos-nums"
+            class="bg-[#58a6ff] text-2xl px-2.5 py-1.5 rounded-xl"
+            >64</span
+          >
         </div>
-        <div class="repoes-list"></div>
+        <div id="repoes-list" class="grid grid-cols-2 gap-2">
       </section>
     </main>
     <footer
