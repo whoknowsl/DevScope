@@ -10,11 +10,12 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
       referrerpolicy="no-referrer"
     />
+
     <script type="module" src="js/recherche.js"></script>
   </head>
   <body class="min-h-screen bg-[#010309] text-[#e6edf3] font-sans">
     <header
-      class="bg-[#161b22] px-3 py-3 flex justify-between items-center border-b-1 border-b-gray-500 sticky top-0"
+      class="bg-[#161b22] px-3 py-3 flex justify-between items-center border-b-1 border-b-gray-500 sticky top-0 z-1"
     >
       <a class="logo flex items-center gap-3" href="/index.html">
         <img
@@ -36,7 +37,7 @@
           Recherche
         </a>
         <a
-          href="/pages/recherche.html"
+          href="/pages/shortlist.html"
           class="rounded-md border border-[#30363d] px-3 py-1.5 font-medium text-[#e6edf3] hover:bg-[#21262d]"
         >
           Shortlist
@@ -71,9 +72,9 @@
         class="mt-2 min-h-5 text-left text-sm text-[#f85149]"
       ></p>
     </form>
-    <main class="min-h-screen grid grid-cols-6">
+    <main class="min-h-screen grid grid-cols-6 px-4">
       <aside class="aside-profile col-end-1 flex px-2"></aside>
-      <section class="col-end-6 col-start-1 flex flex-col gap-5 px-5 py-4">
+      <section id="user-page" class="col-end-6 col-start-1 flex flex-col gap-5 px-5 py-4">
         <div class="flex items-center gap-4">
           <h1 class="text-4xl font-bold text-white">Depots</h1>
           <span
@@ -82,7 +83,12 @@
             >64</span
           >
         </div>
-        <div id="repoes-list" class="grid grid-cols-2 gap-2">
+        <div id="repoes-list" class="grid grid-cols-2 gap-2"></div>
+        <div class="pagination flex justify-center gap-1">
+          <button id="prev">previous</button>
+          <p id="page-info">1/1</p>
+          <button id="next">next</button>
+        </div>
       </section>
     </main>
     <footer

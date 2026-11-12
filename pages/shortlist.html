@@ -10,6 +10,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
       referrerpolicy="no-referrer"
     />
+    <script type="module" src="./js/shortlist.js"></script>
   </head>
   <body class="min-h-screen bg-[#010309] text-[#e6edf3] font-sans">
     <header
@@ -105,7 +106,30 @@
           />
         </div>
       </div>
-      <div class="short-list"></div>
+      <div class="short-list mt-3 flex flex-col gap-4">
+        <div
+          class="flex bg-[#161b22]  px-3 py-4 border-1 rounded-l">
+          <div class="">
+            <div class="" flex justify-between>
+              <img class="w-30 rounded-full" src="${user.avatar_url}" />
+              <div>
+                <h1>${user.login}</h1>
+                <p>@${user.name}</p>
+                <span>Java</span>
+                <p>${user.bio}</p>
+                <p>Ajoute le ${user.created_at}</p>
+                <p></p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <span>stars</span>
+              <button>Refuse</button>
+              <button>Modifier</button>
+              <button>Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
     <footer
       class="border-t border-[#30363d] py-6 text-center text-xs text-[#7d8590]"
