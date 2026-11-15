@@ -17,7 +17,7 @@ async function fetchFavoUsers() {
     console.log(err);
   }
 }
-console.log(favoritUsers);
+
 function displayFavorUsers(users) {
   shortList.innerHTML = "";
   users.forEach((user) => {

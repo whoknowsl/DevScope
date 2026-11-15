@@ -1,7 +1,6 @@
 import { PostUsers, initialFetch, repos } from "../js/api.js";
 import { favoritUsers } from "../js/shortlist.js";
 export const repoesList = document.querySelector("#repoes-list");
-console.log(favoritUsers);
 const urlParams = new URLSearchParams(window.location.search);
 const prevINput = urlParams.get("userName");
 const recherchForm = document.querySelector("#recherch-form");
@@ -15,60 +14,60 @@ initialFetch(searchBar.value);
 
 export function displayUser(user) {
   aside.innerHTML = "";
-  aside.innerHTML += `<div class="bg-[#161b22] col-end-1 flex flex-col items-center px-4 py-5">
+  aside.innerHTML += `<div class="w-full rounded-md border border-[#30363d] bg-[#161b22] flex flex-col items-center px-4 py-5">
           <img
-            class="w-40 rounded-full"
+            class=" h-32 w-32 rounded-full object-cover sm:h-40 sm:w-40"
             src="${user.avatar_url}"
             alt="photo-profile"
           />
-          <h3 class="text-xl font-semibold mt-1">${user.login}</h3>
-          <p class="font-medium text-[#7d8590]">@${user.name}</p>
-          <p class="text-[#58a6ff] my-3 text-xl text-center">"${user.bio}"</p>
+          <h3 class="text-xl font-semibold mt-1">${user.login !== null ? user.login : "aucun user login"}</h3>
+          <p class="font-medium text-[#7d8590]">@${user.name !== null ? user.name : "aucun user name"}</p>
+          <p class="text-[#58a6ff] my-3 text-base text-center sm:text-xl">"${user.bio !== null ? user.bio : "aucun user bio"}"</p>
           <div
-            class="rounded-md border border-[#30363d] px-3 py-2 font-medium text-[#e6edf3] flex flex-col gap-2 min-w-128"
+            class="rounded-md border border-[#30363d] px-3 py-2 font-medium text-[#e6edf3] flex w-full flex-col gap-2"
           >
-            <h4><i class="fa-solid fa-globe"></i> ${user.location}</h4>
+            <h4><i class="fa-solid fa-globe"></i> ${user.location !== null ? user.location : "aucun user location"}</h4>
             <h4>
-              <i class="fa-solid fa-calendar-days"></i> Membre depuis ${user.created_at}
+              <i class="fa-solid fa-calendar-days"></i> Membre depuis ${user.created_at !== null ? user.created_at : "the date is unkowen"}
             </h4>
           </div>
-          <div class="flex gap-4 my-5">
+          <div class="grid w-full grid-cols-3 gap-2 my-5">
             <div
-              class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
+              class="rounded-md border border-[#30363d] px-3 py-2 font-medium flex flex-col items-center gap-3"
             >
               <p class="number-depots text-[#d29922] text-2xl">${user.public_repos}</p>
               <p class="font-medium text-[#7d8590]">DEPOTS</p>
             </div>
             <div
-              class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
+              class="rounded-md border border-[#30363d] px-3 py-2 font-medium flex flex-col items-center gap-3"
             >
               <p class="number-abonnes text-[#58a6ff] text-2xl">${user.followers}</p>
               <p class="font-medium text-[#7d8590]">ABONNES</p>
             </div>
             <div
-              class="rounded-md border border-[#30363d] px-3 py-2 font-medium min-w-40 flex flex-col items-center gap-3"
+              class="rounded-md border border-[#30363d] px-3 py-2 font-medium flex flex-col items-center gap-3"
             >
               <p class="number-abonnements text-[#3fb950] text-2xl">18</p>
               <p class="font-medium text-[#7d8590]">ABONNEMENTS</p>
             </div>
           </div>
 
-          <button id = ${user.login}
-            class="rounded-2xl bg-[#58a6ff] px-6 py-4 text-lg font-bold text-white my-4"
+          <button  id="addShortlist"
+            class="rounded-2xl bg-[#58a6ff] text-white  w-full px-4 py-3 text-base font-bold my-2"
           >
             <i class="fa-solid fa-star"></i> Ajouter a la shortlist</button
           ><a href="${user.html_url}"><button
-            class="rounded-2xl bg-[#7d8590] px-6 py-4 text-lg font-bold text-white my-4"
+            class="rounded-2xl bg-[#7d8590]  text-white w-full px-4 py-3 text-base font-bold "
           >
             Voir le profil original <i class="fa-solid fa-arrow-right"></i>
           </button></a>
         </div>`;
   reposNums.textContent = `${user.public_repos}`;
-  const addToShortList = document.querySelector(`#${user.login}`);
+  const addToShortList = document.querySelector("#addShortlist");
 
   addToShortList.addEventListener("click", () => {
     if (checkuser(user.login)) {
-      console.log("the user alrady existe");
+      alert("the user alrady existe");
       return;
     } else {
       PostUsers(user);
@@ -96,9 +95,35 @@ recherchForm.addEventListener("submit", (e) => {
 
 //pagination
 const prevBtn = document.querySelector("#prev");
-const nextBtn = document.querySelector("#next"); 
+const nextBtn = document.querySelector("#next");
 const pageInfo = document.querySelector("#page-info");
-
+export const languageColors = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  SCSS: "#c6538c",
+  Python: "#3572A5",
+  Java: "#b07219",
+  "C#": "#178600",
+  "C++": "#f34b7d",
+  C: "#555555",
+  PHP: "#4F5D95",
+  Ruby: "#701516",
+  Go: "#00ADD8",
+  Rust: "#dea584",
+  Swift: "#F05138",
+  Kotlin: "#A97BFF",
+  Dart: "#00B4AB",
+  Shell: "#89e051",
+  Vue: "#41b883",
+  Svelte: "#ff3e00",
+  Lua: "#000080",
+  R: "#198CE7",
+  Scala: "#c22d40",
+  "Jupyter Notebook": "#DA5B0B",
+  Dockerfile: "#384d54",
+};
 const PER_PAGE = 6;
 let page = 1;
 
@@ -124,15 +149,14 @@ export function displayReposUser(repos) {
                 ${repo.visibility}
               </span>
             </div>
-            <p class="text-xs text-[#7d8590]">${repo.description}</p>
+            <p class="text-xs text-[#7d8590]">${repo.description !== null ? repo.description : "Aucune description"}</p>
             <div
               class="flex flex-wrap items-center gap-4 text-xs text-[#7d8590]">
               <span class="flex items-center gap-1.5">
                 <span
-                  class="h-3 w-3 rounded-full bg-[#e34c26]"
-                  aria-hidden="true"
+                  class="h-3 w-3 rounded-full bg-[${languageColors[repo.language]}]"
                 ></span>
-                HTML
+                ${repo.language}
               </span>
               <span
                 class="flex items-center gap-1 hover:text-[#58a6ff]"
