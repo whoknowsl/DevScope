@@ -17,8 +17,17 @@ async function fetchFavoUsers() {
     console.log(err);
   }
 }
-
+function displayEmptyShortList() {
+  shortList.innerHTML = "";
+  shortList.innerHTML += `<div class=col items-center gap-3 rounded-md border bg-[#0d1117] px-6 py-16 text-center"flex flex-">
+    <h2 class="text-xl font-semibold text-[#7d8590]">Votre shortlist est vide</h2>  
+    <p>Recherchez un développeur et cliquez sur « Ajouter à la shortlist » pour le retrouver ici.</p>
+  <div>`;
+}
 function displayFavorUsers(users) {
+  if (user.length === 0) {
+    displayEmptyShortList();
+  }
   shortList.innerHTML = "";
   users.forEach((user) => {
     shortList.innerHTML += `<ul class="flex flex-col gap-3">
@@ -33,12 +42,12 @@ function displayFavorUsers(users) {
           class="h-16 w-16 shrink-0 rounded-full border border-[#30363d] object-cover"
         />
         <div class="min-w-0">
-          <h3 class="truncate text-base font-semibold text-[#e6edf3]">${user.name}</h3>
+          <h3 class="truncate text-base font-semibold text-[#e6edf3]">${user.name !== null ? user.name : "aucune user name "}</h3>
           <div class="flex flex-wrap items-center gap-2">
-            <span class="text-sm text-[#7d8590]">@${user.login}</span>
+            <span class="text-sm text-[#7d8590]">@${user.login !== null ? user.login : "aucune user login"}</span>
             <span class="rounded-full border border-[#30363d] px-2 py-0.5 text-xs font-medium text-[#7d8590]">Java</span>
           </div>
-          <p class="mt-1 text-sm italic text-[#58a6ff]">${user.email}</p>
+          <p class="mt-1 text-sm italic text-[#58a6ff]">${user.email !== null ? user.email : "aucune user email"}</p>
           <p class="mt-1 text-xs text-[#7d8590]">Ajouté le 06/11/2026</p>
         </div>
       </div>
