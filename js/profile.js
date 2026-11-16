@@ -1,5 +1,4 @@
-import { PostUsers, initialFetch, repos } from "../js/api.js";
-import { favoritUsers } from "../js/shortlist.js";
+import { GITHUB_API, languageColors, headers } from "./config.js";
 export const repoesList = document.querySelector("#repoes-list");
 const urlParams = new URLSearchParams(window.location.search);
 const prevINput = urlParams.get("userName");
@@ -8,10 +7,38 @@ const searchBar = document.querySelector("#user-name");
 const aside = document.querySelector(".aside-profile");
 const reposNums = document.querySelector("#repos-nums");
 const body = document.querySelector("body");
+
+//assign the url value to the search input
 searchBar.value = prevINput;
 
+export let repos = null;
+
+//GET data
+export async function initialFetch(user) {
+  try {
+    const res = await fetch(`${GITHUB_API}/users/${user}`, headers);
+    const repose = await fetch(`${GITHUB_API}/users/${user}/repos`, headers);
+    if (!res.ok) {
+      displayError(res.status);
+      throw new Error(`Utilisateur introuvable ou erreur HTTP : ${res.status}`);
+    }
+    if (!repose.ok) {
+      displayError(res.status);
+      throw new Error(
+        `Utilisateur introuvable ou erreur HTTP : ${repose.status}`,
+      );
+    }
+    user = await res.json();
+    repos = await repose.json();
+    displayUser(user);
+    displayReposUser(repos);
+  } catch (err) {
+    console.log("Erreur lors de la récupération des données :", err);
+  }
+}
 initialFetch(searchBar.value);
 
+//displayin the user
 export function displayUser(user) {
   aside.innerHTML = "";
   aside.innerHTML += `<div class="w-full rounded-md border border-[#30363d] bg-[#161b22] flex flex-col items-center px-4 py-5">
@@ -74,61 +101,9 @@ export function displayUser(user) {
     }
   });
 }
-
-export function displayError(error) {
-  body.innerHTML = "";
-  body.innerHTML += ` <p class="bg-gradient-to-b from-[#e6edf3] to-[#30363d] bg-clip-text text-8xl font-extrabold text-transparent sm:text-9xl" aria-hidden="true">
-        ${error}
-      </p>
- 
-      <h1 class="mt-4 text-3xl font-semibold sm:text-4xl">Ce n'est pas la page que vous cherchez</h1>
-      <p class="mt-3 max-w-md text-[#7d8590]">
-        La page a peut-être été déplacée ou supprimée, ou le nom d'utilisateur n'existe pas.
-      </p>`;
-}
-//
-recherchForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const value = searchBar.value;
-  initialFetch(value);
-});
-
-//pagination
-const prevBtn = document.querySelector("#prev");
-const nextBtn = document.querySelector("#next");
-const pageInfo = document.querySelector("#page-info");
-export const languageColors = {
-  JavaScript: "#f1e05a",
-  TypeScript: "#3178c6",
-  HTML: "#e34c26",
-  CSS: "#563d7c",
-  SCSS: "#c6538c",
-  Python: "#3572A5",
-  Java: "#b07219",
-  "C#": "#178600",
-  "C++": "#f34b7d",
-  C: "#555555",
-  PHP: "#4F5D95",
-  Ruby: "#701516",
-  Go: "#00ADD8",
-  Rust: "#dea584",
-  Swift: "#F05138",
-  Kotlin: "#A97BFF",
-  Dart: "#00B4AB",
-  Shell: "#89e051",
-  Vue: "#41b883",
-  Svelte: "#ff3e00",
-  Lua: "#000080",
-  R: "#198CE7",
-  Scala: "#c22d40",
-  "Jupyter Notebook": "#DA5B0B",
-  Dockerfile: "#384d54",
-};
-const PER_PAGE = 6;
-let page = 1;
-
 export function displayReposUser(repos) {
   const totalPages = Math.max(1, Math.ceil(repos.length / PER_PAGE));
+
   page = Math.min(Math.max(page, 1), totalPages);
 
   const start = (page - 1) * PER_PAGE;
@@ -179,6 +154,33 @@ export function displayReposUser(repos) {
   });
   pageInfo.textContent = `Page ${page} / ${totalPages}`;
 }
+//displaying the error message
+export function displayError(error) {
+  body.innerHTML = "";
+  body.innerHTML += ` <p class="bg-gradient-to-b from-[#e6edf3] to-[#30363d] bg-clip-text text-8xl font-extrabold text-transparent sm:text-9xl" aria-hidden="true">
+        ${error}
+      </p>
+ 
+      <h1 class="mt-4 text-3xl font-semibold sm:text-4xl">Ce n'est pas la page que vous cherchez</h1>
+      <p class="mt-3 max-w-md text-[#7d8590]">
+        La page a peut-être été déplacée ou supprimée, ou le nom d'utilisateur n'existe pas.
+      </p>`;
+}
+//pagination event
+recherchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const value = searchBar.value;
+  initialFetch(value);
+});
+
+//pagination filter and rechercher
+const prevBtn = document.querySelector("#prev");
+const nextBtn = document.querySelector("#next");
+const pageInfo = document.querySelector("#page-info");
+
+const PER_PAGE = 6;
+let page = 1;
+
 prevBtn.addEventListener("click", () => {
   page--;
   displayReposUser(repos);

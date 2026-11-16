@@ -1,12 +1,11 @@
+import { MOCKAPI_URL } from "./config.js";
 const shortList = document.querySelector(".short-list");
+
 export const favoritUsers = [];
 
 async function fetchFavoUsers() {
   try {
-    const response = await fetch(
-      "https://6af5823bf6270fa08d6827a5.mockapi.io/devscope/shortlist/user",
-    );
-    console.log(response);
+    const response = await fetch(MOCKAPI_URL);
     if (!response.ok) {
       console.log(response.status);
     }
@@ -25,10 +24,10 @@ function displayEmptyShortList() {
   <div>`;
 }
 function displayFavorUsers(users) {
-  if (user.length === 0) {
+  if (users.length === 0) {
     displayEmptyShortList();
   }
-  shortList.innerHTML = "";
+  shortList.innerHTML += "";
   users.forEach((user) => {
     shortList.innerHTML += `<ul class="flex flex-col gap-3">
   <li>

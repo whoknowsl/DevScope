@@ -11,8 +11,7 @@
       referrerpolicy="no-referrer"
     />
 
-    <script type="module" src="/js/recherche.js"></script>
-    <script type="module" src="/js/api.js"></script>
+    <script type="module" src="/js/profile.js"></script>
   </head>
   <body class="min-h-screen bg-[#010309] text-[#e6edf3] font-sans">
     <header
@@ -84,8 +83,67 @@
             >64</span
           >
         </div>
-        <div id="repoes-list" class="grid grid-cols-1 gap-3 md:grid-cols-2"></div>
-        <div class="pagination flex jflex-wrap items-center justify-center gap-2">
+        <div
+          class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-4"
+        >
+          <div
+            class="flex flex-wrap items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1"
+          >
+            <button
+              type="button"
+              data-status="tous"
+              class="bg-[#7d8590] rounded-full px-5 py-2 font-mono text-sm font-bold text-white"
+            >
+              Tous
+            </button>
+            <button
+              type="button"
+              data-status="HTML"
+              class="rounded-full px-4 py-2 font-mono text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              HTML
+            </button>
+            <button
+              type="button"
+              data-status="JavaScript"
+              class="rounded-full px-4 py-2 font-mono text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              JavaScript
+            </button>
+            <button
+              type="button"
+              data-status="Css"
+              class="rounded-full px-4 py-2 font-mono text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              Css
+            </button>
+            <button
+              type="button"
+              data-status="Java"
+              class="rounded-full px-4 py-2 font-mono text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              Java
+            </button>
+          </div>
+          <div>
+            <label for="searchRepo" class="sr-only"
+              >Rechercher un repo</label
+            >
+            <input
+              id="searchRepo"
+              type="text"
+              placeholder="Rechercher un candidat…"
+              class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-slate-200 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 sm:w-80"
+            />
+          </div>
+        </div>
+        <div
+          id="repoes-list"
+          class="grid grid-cols-1 gap-3 md:grid-cols-2"
+        ></div>
+        <div
+          class="pagination flex jflex-wrap items-center justify-center gap-2"
+        >
           <button
             class="flex items-center gap-1 rounded-md border border-[#30363d] px-3 py-1.5 font-medium text-[#58a6ff] transition hover:border-[#8b949e] hover:bg-[#161b22] focus:outline-none focus:ring-2 focus:ring-[#1f6feb]/50 disabled:cursor-not-allowed disabled:border-transparent disabled:text-[#7d8590] disabled:hover:bg-transparent"
             id="prev"
