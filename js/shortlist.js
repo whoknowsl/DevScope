@@ -1,8 +1,8 @@
 import { MOCKAPI_URL } from "./config.js";
 const shortList = document.querySelector(".short-list");
-
 export const favoritUsers = [];
-
+const formeList = document.querySelector("#forme-list");
+const removeBtn = document.querySelector("#remove-btn");
 async function fetchFavoUsers() {
   try {
     const response = await fetch(MOCKAPI_URL);
@@ -29,6 +29,7 @@ function displayFavorUsers(users) {
   }
   shortList.innerHTML += "";
   users.forEach((user) => {
+    console.log(user);
     shortList.innerHTML += `<ul class="flex flex-col gap-3">
   <li>
     <article
@@ -52,28 +53,29 @@ function displayFavorUsers(users) {
       </div>
 
      
-      <div class="flex flex-wrap items-center gap-2">
+      <div id="${user.id}" class="flex flex-wrap items-center gap-2">
         <div class="flex gap-0.5 text-sm" role="img">
-          <i class="fa-solid fa-star text-[#d29922]"></i>
-          <i class="fa-solid fa-star text-[#d29922]"></i>
-          <i class="fa-solid fa-star text-[#d29922]"></i>
-          <i class="fa-solid fa-star text-[#d29922]"></i>
-          <i class="fa-solid fa-star text-[#d29922]"></i>
+          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="1"></i>
+          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="2"></i>
+          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="3"></i>
+          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="4"></i>
+          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="5"></i>
         </div>
 
         
         <button
           type="button"
-          class="rounded-md border border-[#da3633] px-3 py-1.5 text-xs font-medium text-[#f85149]"
+          class=" rounded-md border border-[#da3633] px-3 py-1.5 text-xs font-medium text-[#f85149]"
         >
-          <i class="fa-solid fa-circle" aria-hidden="true"></i> Refusé
+          <i class="fa-solid fa-circle"></i> Refusé
         </button>
 
         <button
           type="button"
+          id="modifier-btn"
           class="rounded-md border border-[#30363d] px-3 py-1.5 text-xs font-medium text-[#e6edf3]"
         >
-          <i class="fa-solid fa-pen" aria-hidden="true"></i> Modifier
+          <i class="fa-solid fa-pen"></i> Modifier
         </button>
 
         <button
@@ -86,6 +88,10 @@ function displayFavorUsers(users) {
     </article>
   </li>
 </ul>`;
+    const modifierBtn = document.querySelector("#modifier-btn");
+    modifierBtn.addEventListener("click", () => {
+      formeList.classList.toggle("hidden");
+    });
   });
 }
 fetchFavoUsers();

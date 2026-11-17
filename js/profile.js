@@ -37,7 +37,6 @@ export async function initialFetch(user) {
   }
 }
 initialFetch(searchBar.value);
-
 //displayin the user
 export function displayUser(user) {
   aside.innerHTML = "";
