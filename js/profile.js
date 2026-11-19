@@ -1,4 +1,5 @@
-import { GITHUB_API, languageColors, headers } from "./config.js";
+import { GITHUB_API, languageColors, headers, MOCKAPI_URL } from "./config.js";
+import { PostUsers } from "./api.js";
 export const repoesList = document.querySelector("#repoes-list");
 const urlParams = new URLSearchParams(window.location.search);
 const prevINput = urlParams.get("userName");
@@ -91,8 +92,8 @@ export function displayUser(user) {
   reposNums.textContent = `${user.public_repos}`;
   const addToShortList = document.querySelector("#addShortlist");
 
-  addToShortList.addEventListener("click", () => {
-    if (checkuser(user.login)) {
+  addToShortList.addEventListener("click", async () => {
+    if (await checkuser(user.login)) {
       alert("the user alrady existe");
       return;
     } else {
@@ -189,8 +190,11 @@ nextBtn.addEventListener("click", () => {
   displayReposUser(repos);
 });
 
-//check plaayer if alrady existe
-function checkuser(login) {
-  const checkdUser = favoritUsers.some((user) => user.login == login);
-  return checkdUser;
+//check if the user is already in the shortlist
+export async function checkuser(login) {
+  const res = await fetch(`${MOCKAPI_URL}?login=${login}`);
+  if (res.status == 404) return false;
+  if (!res.ok) throw new Error(res.status);
+  const users = await res.json();
+  return users.some((u) => u.login == login);
 }

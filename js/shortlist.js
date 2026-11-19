@@ -1,19 +1,29 @@
+import { updateCandidate } from "./api.js";
 import { MOCKAPI_URL } from "./config.js";
 const shortList = document.querySelector(".short-list");
-export const favoritUsers = [];
 const formeList = document.querySelector("#forme-list");
 const removeBtn = document.querySelector("#remove-btn");
+const cancelBtn = document.querySelector("#cancel-btn");
+const editLogin = document.querySelector("#edit-login");
+const editMessage = document.querySelector("#edit-message");
+const saveBtn = document.querySelector("#save-btn");
+const statutOfRecrutement = document.querySelector("#statut-of-recrutement");
+const note = document.querySelector("#note");
+const noteInterne = document.querySelector("#note-interne");
+
+export const favoritUsers = [];
+let idEnCours = null;
 async function fetchFavoUsers() {
   try {
     const response = await fetch(MOCKAPI_URL);
     if (!response.ok) {
-      console.log(response.status);
+      throw new Error(`Erreur HTTP ${response.status}`);
     }
-    const res = await response.json();
-    favoritUsers.push(...res);
+    favoritUsers.length = 0;
+    favoritUsers.push(...(await response.json()));
     displayFavorUsers(favoritUsers);
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
   }
 }
 function displayEmptyShortList() {
@@ -27,11 +37,13 @@ function displayFavorUsers(users) {
   if (users.length === 0) {
     displayEmptyShortList();
   }
-  shortList.innerHTML += "";
+  shortList.innerHTML = "";
   users.forEach((user) => {
-    console.log(user);
-    shortList.innerHTML += `<ul class="flex flex-col gap-3">
-  <li>
+    let stars = "";
+    for (let i = 1; i <= 5; i++) {
+      stars += `<i class ="fa-solid fa-star ${i <= Number(user.note) ? "text-[#d29922]" : "text-[#30363d]"}"></i>`;
+    }
+    shortList.innerHTML += `
     <article
       class="flex flex-col gap-4 rounded-md border border-[#30363d] bg-[#0d1117] p-4 sm:flex-row sm:items-center sm:justify-between"
     >
@@ -47,22 +59,16 @@ function displayFavorUsers(users) {
             <span class="text-sm text-[#7d8590]">@${user.login !== null ? user.login : "aucune user login"}</span>
             <span class="rounded-full border border-[#30363d] px-2 py-0.5 text-xs font-medium text-[#7d8590]">Java</span>
           </div>
-          <p class="mt-1 text-sm italic text-[#58a6ff]">${user.email !== null ? user.email : "aucune user email"}</p>
+          <p class="mt-1 text-sm italic text-[#58a6ff]">${user.commentaire !== undefined ? user.commentaire : "there's no comment"}</p>
           <p class="mt-1 text-xs text-[#7d8590]">Ajouté le 06/11/2026</p>
         </div>
       </div>
 
      
-      <div id="${user.id}" class="flex flex-wrap items-center gap-2">
-        <div class="flex gap-0.5 text-sm" role="img">
-          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="1"></i>
-          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="2"></i>
-          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="3"></i>
-          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="4"></i>
-          <i class="stars-rating fa-solid fa-star text-[#d29922]" data-number="5"></i>
-        </div>
-
-        
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex gap-0.5 text-sm">
+        ${stars}
+        </div>        
         <button
           type="button"
           class=" rounded-md border border-[#da3633] px-3 py-1.5 text-xs font-medium text-[#f85149]"
@@ -72,7 +78,8 @@ function displayFavorUsers(users) {
 
         <button
           type="button"
-          id="modifier-btn"
+          data-action = "modifier"
+          data-id = "${user.id}"
           class="rounded-md border border-[#30363d] px-3 py-1.5 text-xs font-medium text-[#e6edf3]"
         >
           <i class="fa-solid fa-pen"></i> Modifier
@@ -80,18 +87,65 @@ function displayFavorUsers(users) {
 
         <button
           type="button"
+          data-action = "supprimer"
+          data-id = "${user.id}"
           class="rounded-md border border-[#da3633] px-3 py-1.5 text-xs font-medium text-[#f85149]"
         >
           <i class="fa-solid fa-xmark"></i> Supprimer
         </button>
       </div>
-    </article>
-  </li>
-</ul>`;
-    const modifierBtn = document.querySelector("#modifier-btn");
-    modifierBtn.addEventListener("click", () => {
-      formeList.classList.toggle("hidden");
-    });
+    </article>`;
   });
 }
+shortList.addEventListener("click", (e) => {
+  const modifierBtn = e.target.closest("[data-action='modifier']");
+  if (!modifierBtn) return;
+  const user = favoritUsers.find((u) => u.id == modifierBtn.dataset.id);
+  if (!user) return;
+  idEnCours = user.id;
+  editLogin.textContent = `@${user.login}`;
+  statutOfRecrutement.value = user.statut ? user.statut : "A contacter";
+  note.value = user.note ? user.note : 3;
+  noteInterne.value = user.commentaire ? user.commentaire : "";
+
+  editMessage.textContent = "";
+  formeList.classList.remove("hidden");
+});
+formeList.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Enregistrement...";
+  editMessage.textContent = "";
+  try {
+    const oldUser = favoritUsers.find((u) => u.id == idEnCours);
+    const newUser = {
+      ...oldUser,
+      statut: statutOfRecrutement.value,
+      note: Number(note.value),
+      commentaire: noteInterne.value,
+    };
+    const updated = await updateCandidate(idEnCours, newUser, MOCKAPI_URL);
+    const index = favoritUsers.findIndex((u) => u.id == idEnCours);
+    favoritUsers[index] = updated;
+    displayFavorUsers(favoritUsers);
+    formeList.classList.add("hidden");
+  } catch (err) {
+    if (err.message == 404) {
+      editMessage.textContent = "Ce candidat n'existe plus.";
+    } else {
+      editMessage.textContent =
+        "Impossible d'enregistrer. Verifiez votre connexion.";
+    }
+  } finally {
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Enregistrer";
+  }
+});
+//
+removeBtn.addEventListener("click", () => {
+  formeList.classList.add("hidden");
+});
+cancelBtn.addEventListener("click", () => {
+  formeList.classList.add("hidden");
+});
 fetchFavoUsers();

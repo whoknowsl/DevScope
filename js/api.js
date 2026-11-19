@@ -1,7 +1,3 @@
-import { displayUser, displayError, displayReposUser } from "./recherche.js";
-
-export const repos = [];
-
 //GET data
 export async function initialFetch(user) {
   try {
@@ -45,5 +41,25 @@ export async function PostUsers(user) {
     },
   );
   if (!res.ok) throw new Error(`Error ${res.status}`);
+  return await res.json();
+}
+//PUT data
+export async function updateCandidate(id, candidate, MOCKAPI_URL) {
+  const res = await fetch(`${MOCKAPI_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(candidate),
+  });
+  if (!res.ok) throw new Error(res.status);
+  return await res.json();
+}
+
+export async function deletCandidate(id, candidat, MOCKAPI_URL) {
+  const res = await fetch(`${MOCKAPI_URL}/${id}`, {
+    method: "DELETE",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(candidat),
+  });
+  if (!res.ok) throw new Error(res.status);
   return await res.json();
 }

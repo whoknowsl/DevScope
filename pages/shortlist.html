@@ -106,40 +106,90 @@
       </div>
       <div class="short-list mt-3 flex flex-col gap-4"></div>
     </main>
-    <form id="forme-list"
-      class="hidden absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-yellow-500 px-4 py-4 flex flex-col"
+
+    <form
+      id="forme-list"
+      class="hidden flex flex-col gap-4 p-5 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-1 bg-[#7d8590]"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-start justify-between gap-3">
         <div>
-          <h1>mise a jour du profil</h1>
-          <p>Modifier le candidat . user name</p>
+          <h1 class="text-lg font-semibold">Mise à jour du profil</h1>
+          <p class="text-sm text-[#7d8590]">
+            Modifier le candidat
+            <span id="edit-login" class="text-[#58a6ff]"></span>
+          </p>
         </div>
-        <i id="remove-btn" class="fa-solid fa-xmark"></i>
+        <button
+          type="button"
+          id="remove-btn"
+          aria-label="Fermer"
+          class="text-[#7d8590] hover:text-[#e6edf3]"
+        >
+          <i id="close-form" class="fa-solid fa-xmark text-black"></i>
+        </button>
       </div>
-      <div class="flex flex-col">
-        <label for="statut-of-recrutement">Statut de recrutement</label>
-        <select id="statut-of-recrutement" class="bg-green-500">
-          <option value="Refuse">Refuse</option>
-          <option value=""></option>
-          <option value=""></option>
-          <option value=""></option>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="statut-of-recrutement" class="text-sm font-medium"
+          >Statut de recrutement</label
+        >
+        <select
+          id="statut-of-recrutement"
+          name="statut"
+          class="rounded-md border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm focus:border-[#58a6ff] focus:outline-none"
+        >
+          <option value="À contacter">À contacter</option>
+          <option value="Entretien">Entretien</option>
+          <option value="Retenu">Retenu</option>
+          <option value="Refusé">Refusé</option>
         </select>
       </div>
-      <div class="flex flex-col">
-        <label>Note</label>
-        <select id="" class="bg-green-500">
-          <option value="">5/5</option>
-          <option value="">4/5</option>
-          <option value="">3/5</option>
-          <option value="">2/5</option>
-          <option value="">1/5</option>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="note" class="text-sm font-medium">Note</label>
+        <select
+          id="note"
+          name="note"
+          class="rounded-md border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm focus:border-[#58a6ff] focus:outline-none"
+        >
+          <option value="5">5/5</option>
+          <option value="4">4/5</option>
+          <option value="3">3/5</option>
+          <option value="2">2/5</option>
+          <option value="1">1/5</option>
         </select>
       </div>
-      <div class="flex flex-col">
-        <label>Note interne</label>
-        <textarea name="" id="" cols="10" rows="10" class="bg-gray-500"></textarea>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="note-interne" class="text-sm font-medium"
+          >Note interne</label
+        >
+        <textarea
+          id="note-interne"
+          name="commentaire"
+          rows="5"
+          class="resize-none rounded-md border border-[#30363d] bg-[#0d1117] px-3 py-2 text-sm focus:border-[#58a6ff] focus:outline-none"
+        ></textarea>
       </div>
-      <div class="flex justify-end gap-4"><button>Annuler</button><button>Enregistrer</button></div>
+
+      <p id="edit-message" class="text-sm text-[#f85149]" role="alert"></p>
+
+      <div class="flex justify-end gap-3">
+        <button
+          type="button"
+          id="cancel-btn"
+          class="rounded-md border border-[#30363d] px-4 py-1.5 text-sm font-medium hover:border-[#8b949e]"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          id="save-btn"
+          class="rounded-md bg-[#238636] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#2ea043] disabled:opacity-50"
+        >
+          Enregistrer
+        </button>
+      </div>
     </form>
     <footer
       class="border-t border-[#30363d] py-6 text-center text-xs text-[#7d8590]"
