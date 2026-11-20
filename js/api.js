@@ -1,34 +1,22 @@
+import { GITHUB_API, headers ,CACHE_DURATION } from "./config.js";
+import { readCache, saveCache } from "./cash.js";
 //GET data
-export async function initialFetch(user) {
-  try {
-    const res = await fetch(`https://api.github.com/users/${user}`, {
-      method: "GET",
-      // headers: { Authorization: `Bearer ${token}` },
-      Accept: "application/vnd.github+json",
-    });
-    const repose = await fetch(`https://api.github.com/users/${user}/repos`, {
-      method: "GET",
-      // headers: { Authorization: `Bearer ${token}` },
-      Accept: "application/vnd.github+json",
-    });
-    if (!res.ok) {
-      displayError(res.status);
-      throw new error(`Utilisateur introuvable ou erreur HTTP : ${res.status}`);
-    }
-    if (!repose.ok) {
-      displayError(res.status);
-      throw new error(
-        `Utilisateur introuvable ou erreur HTTP : ${repose.status}`,
-      );
-    }
-    user = await res.json();
-    repos = await repose.json();
-    displayUser(user);
-
-    displayReposUser(repos);
-  } catch (err) {
-    console.log("Erreur lors de la récupération des données :", err);
+export async function fetchGithubUser(name) {
+  const [res, repose] = await Promise.all([
+    fetch(`${GITHUB_API}/users/${name}`, { headers }),
+    fetch(`${GITHUB_API}/users/${name}/repos`, { headers }),
+  ]);
+  if (!res.ok) {
+    const err = new Error(`Erreur HTTP : ${res.status}`);
+    err.status = res.status;
+    throw err;
   }
+  if (!repose.ok) {
+    const err = new Error(`Erreur HTTP : ${repose.status}`);
+    err.status = repose.status;
+    throw err;
+  }
+  return { user: await res.json(), repos: await repose.json() };
 }
 //POST data
 export async function PostUsers(user) {
@@ -61,3 +49,4 @@ export async function deleteCandidate(id, MOCKAPI_URL) {
   if (!res.ok) throw new Error(res.status);
   return await res.json();
 }
+//

@@ -12,6 +12,11 @@ const note = document.querySelector("#note");
 const noteInterne = document.querySelector("#note-interne");
 const counter = document.querySelector("#counter");
 const listMessage = document.querySelector("#list-message");
+const confirmBox = document.querySelector("#confirm-box");
+const confirmText = document.querySelector("#confirm-text");
+const confirmYes = document.querySelector("#confirm-yes");
+const confirmNo = document.querySelector("#confirm-no");
+let idToDelete = null;
 export const favoritUsers = [];
 let idEnCours = null;
 async function fetchFavoUsers() {
@@ -105,32 +110,29 @@ function displayFavorUsers(users) {
 }
 //
 shortList.addEventListener("click", (e) => {
-  const modifierBtn = e.target.closest("[data-action='modifier']");
-  if (!modifierBtn) return;
-  const user = favoritUsers.find((u) => u.id == modifierBtn.dataset.id);
-  if (!user) return;
-  idEnCours = user.id;
-  editLogin.textContent = `@${user.login}`;
-  statutOfRecrutement.value = user.statut ? user.statut : "A contacter";
-  note.value = user.note ? user.note : 3;
-  noteInterne.value = user.commentaire ? user.commentaire : "";
-
-  editMessage.textContent = "";
-  formeList.classList.remove("hidden");
-});
-//
-shortList.addEventListener("click", async (e) => {
   const supprimerBtn = e.target.closest("[data-action='supprimer']");
   if (!supprimerBtn) return;
-  const id = supprimerBtn.dataset.id;
-
-  if (!confirm("Supprimer ce candidat ?")) return;
-  supprimerBtn.disabled = true;
+  idToDelete = supprimerBtn.dataset.id;
+  const user = favoritUsers.find((u) => u.id == idToDelete);
+  confirmText.textContent = `Supprimer @${user.login} de la shortlist ?`;
   listMessage.textContent = "";
+  confirmBox.classList.remove("hidden");
+  confirmBox.classList.add("flex");
+});
+
+//2. click on Annuler: close the box
+confirmNo.addEventListener("click", () => {
+  confirmBox.classList.add("hidden");
+  confirmBox.classList.remove("flex");
+});
+//
+//3. click on Supprimer in the box: delete
+confirmYes.addEventListener("click", async () => {
+  confirmYes.disabled = true;
   try {
-    await deleteCandidate(id, MOCKAPI_URL);
-    const index = favoritUsers.findIndex((u) => u.id == id);
-    favoritUsers.splice(index, 1);
+    await deleteCandidate(idToDelete, MOCKAPI_URL);
+    const index = favoritUsers.findIndex((u) => u.id == idToDelete);
+    if (index != -1) favoritUsers.splice(index, 1);
     displayFavorUsers(favoritUsers);
   } catch (err) {
     if (err.message == 404) {
@@ -139,7 +141,10 @@ shortList.addEventListener("click", async (e) => {
       listMessage.textContent =
         "Impossible de supprimer. Vérifiez votre connexion.";
     }
-    supprimerBtn.disabled = false;
+  } finally {
+    confirmYes.disabled = false;
+    confirmBox.classList.add("hidden");
+    confirmBox.classList.remove("flex");
   }
 });
 //
