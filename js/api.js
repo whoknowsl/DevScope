@@ -53,12 +53,10 @@ export async function updateCandidate(id, candidate, MOCKAPI_URL) {
   if (!res.ok) throw new Error(res.status);
   return await res.json();
 }
-
-export async function deletCandidate(id, candidat, MOCKAPI_URL) {
+//delet data
+export async function deleteCandidate(id, MOCKAPI_URL) {
   const res = await fetch(`${MOCKAPI_URL}/${id}`, {
     method: "DELETE",
-    headers: { "Content-type": "application/json" },
-    body: JSON.stringify(candidat),
   });
   if (!res.ok) throw new Error(res.status);
   return await res.json();

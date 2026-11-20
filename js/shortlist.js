@@ -1,4 +1,4 @@
-import { updateCandidate } from "./api.js";
+import { updateCandidate, deleteCandidate } from "./api.js";
 import { MOCKAPI_URL } from "./config.js";
 const shortList = document.querySelector(".short-list");
 const formeList = document.querySelector("#forme-list");
@@ -10,7 +10,8 @@ const saveBtn = document.querySelector("#save-btn");
 const statutOfRecrutement = document.querySelector("#statut-of-recrutement");
 const note = document.querySelector("#note");
 const noteInterne = document.querySelector("#note-interne");
-
+const counter = document.querySelector("#counter");
+const listMessage = document.querySelector("#list-message");
 export const favoritUsers = [];
 let idEnCours = null;
 async function fetchFavoUsers() {
@@ -31,11 +32,15 @@ function displayEmptyShortList() {
   shortList.innerHTML += `<div class=col items-center gap-3 rounded-md border bg-[#0d1117] px-6 py-16 text-center"flex flex-">
     <h2 class="text-xl font-semibold text-[#7d8590]">Votre shortlist est vide</h2>  
     <p>Recherchez un développeur et cliquez sur « Ajouter à la shortlist » pour le retrouver ici.</p>
-  <div>`;
+  </div>`;
+}
+function disablayCounter() {
+  counter.textContent = `${favoritUsers.length} candidat (s) dans votre shortlist`;
 }
 function displayFavorUsers(users) {
   if (users.length === 0) {
     displayEmptyShortList();
+    return;
   }
   shortList.innerHTML = "";
   users.forEach((user) => {
@@ -96,7 +101,9 @@ function displayFavorUsers(users) {
       </div>
     </article>`;
   });
+  disablayCounter();
 }
+//
 shortList.addEventListener("click", (e) => {
   const modifierBtn = e.target.closest("[data-action='modifier']");
   if (!modifierBtn) return;
@@ -111,9 +118,34 @@ shortList.addEventListener("click", (e) => {
   editMessage.textContent = "";
   formeList.classList.remove("hidden");
 });
+//
+shortList.addEventListener("click", async (e) => {
+  const supprimerBtn = e.target.closest("[data-action='supprimer']");
+  if (!supprimerBtn) return;
+  const id = supprimerBtn.dataset.id;
+
+  if (!confirm("Supprimer ce candidat ?")) return;
+  supprimerBtn.disabled = true;
+  listMessage.textContent = "";
+  try {
+    await deleteCandidate(id, MOCKAPI_URL);
+    const index = favoritUsers.findIndex((u) => u.id == id);
+    favoritUsers.splice(index, 1);
+    displayFavorUsers(favoritUsers);
+  } catch (err) {
+    if (err.message == 404) {
+      listMessage.textContent = "Ce candidat n'existe plus.";
+    } else {
+      listMessage.textContent =
+        "Impossible de supprimer. Vérifiez votre connexion.";
+    }
+    supprimerBtn.disabled = false;
+  }
+});
+//
 formeList.addEventListener("submit", async (e) => {
   e.preventDefault();
-  saveBtn.disabled = true;
+  saveBtn.disabled = false;
   saveBtn.textContent = "Enregistrement...";
   editMessage.textContent = "";
   try {
