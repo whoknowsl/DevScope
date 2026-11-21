@@ -1,4 +1,6 @@
-import { GITHUB_API, languageColors, headers } from "./config.js";
+import { GITHUB_API, languageColors, headers, MOCKAPI_URL } from "./config.js";
+import { fetchGithubUser, PostUsers } from "./api.js";
+import { readCache, saveCache } from "./cash.js";
 export const repoesList = document.querySelector("#repoes-list");
 const urlParams = new URLSearchParams(window.location.search);
 const prevINput = urlParams.get("userName");
@@ -13,30 +15,24 @@ searchBar.value = prevINput;
 
 export let repos = null;
 
-//GET data
-export async function initialFetch(user) {
+//GET data (from the cache if possible)
+export async function initialFetch(name) {
   try {
-    const res = await fetch(`${GITHUB_API}/users/${user}`, headers);
-    const repose = await fetch(`${GITHUB_API}/users/${user}/repos`, headers);
-    if (!res.ok) {
-      displayError(res.status);
-      throw new Error(`Utilisateur introuvable ou erreur HTTP : ${res.status}`);
+    const key = `profil-${name.toLowerCase()}`;
+    let data = readCache(key);
+    if (data == null) {
+      data = await fetchGithubUser(name);
+      saveCache(key, data);
     }
-    if (!repose.ok) {
-      displayError(res.status);
-      throw new Error(
-        `Utilisateur introuvable ou erreur HTTP : ${repose.status}`,
-      );
-    }
-    user = await res.json();
-    repos = await repose.json();
-    displayUser(user);
+    repos = data.repos;
+    page = 1;
+    displayUser(data.user);
     displayReposUser(repos);
   } catch (err) {
-    console.log("Erreur lors de la récupération des données :", err);
+    console.log(err.message);
+    displayError(err.status ? err.status : "Erreur");
   }
 }
-initialFetch(searchBar.value);
 
 //displayin the user
 export function displayUser(user) {
@@ -88,16 +84,34 @@ export function displayUser(user) {
           >
             Voir le profil original <i class="fa-solid fa-arrow-right"></i>
           </button></a>
+          <p id="add-message" class="mt-2 text-center text-sm" role="status"></p>
         </div>`;
-  reposNums.textContent = `${user.public_repos}`;
-  const addToShortList = document.querySelector("#addShortlist");
+  const addMessage = document.querySelector("#add-message");
 
-  addToShortList.addEventListener("click", () => {
-    if (checkuser(user.login)) {
-      alert("the user alrady existe");
-      return;
-    } else {
-      PostUsers(user);
+  addShortlist.addEventListener("click", async () => {
+    addShortlist.disabled = true; // no double click
+    addMessage.textContent = "";
+    try {
+      if (await checkuser(user.login)) {
+        addMessage.className = "mt-2 text-center text-sm text-[#d29922]";
+        addMessage.textContent = "Ce candidat est déjà dans la shortlist.";
+        return;
+      }
+      await PostUsers({
+        ...user,
+        statut: "À contacter",
+        note: 3,
+        commentaire: "",
+        addedAt: new Date().toISOString(),
+      });
+      addMessage.className = "mt-2 text-center text-sm text-[#3fb950]";
+      addMessage.textContent = "Candidat ajouté à la shortlist.";
+    } catch (err) {
+      addMessage.className = "mt-2 text-center text-sm text-[#f85149]";
+      addMessage.textContent =
+        "Impossible d'ajouter. Vérifiez votre connexion.";
+    } finally {
+      addShortlist.disabled = false; // runs even after the return above
     }
   });
 }
@@ -190,8 +204,12 @@ nextBtn.addEventListener("click", () => {
   displayReposUser(repos);
 });
 
-//check plaayer if alrady existe
-function checkuser(login) {
-  const checkdUser = favoritUsers.some((user) => user.login == login);
-  return checkdUser;
+//check if the user is already in the shortlist
+export async function checkuser(login) {
+  const res = await fetch(`${MOCKAPI_URL}?login=${login}`);
+  if (res.status == 404) return false;
+  if (!res.ok) throw new Error(res.status);
+  const users = await res.json();
+  return users.some((u) => u.login == login);
 }
+initialFetch(searchBar.value);
